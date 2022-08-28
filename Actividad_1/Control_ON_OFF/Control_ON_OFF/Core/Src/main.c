@@ -124,12 +124,11 @@ int main(void)
 	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
 	               HAL_GPIO_WritePin(GPIOA, BLUE, GPIO_PIN_SET);
 
-
-
 	           }else if(VP>SP-Offset && VP<SP+Offset)
 	           {
 	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
 	               HAL_GPIO_WritePin(GPIOA, GREEN, GPIO_PIN_SET);
+
 	           }else if(VP>SP+Offset && VP<100)
 	           {
 	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
