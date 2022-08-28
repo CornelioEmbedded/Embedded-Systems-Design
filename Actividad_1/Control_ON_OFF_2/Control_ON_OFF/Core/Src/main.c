@@ -42,6 +42,7 @@
 ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,9 +58,9 @@ uint32_t Offset=5;
 
 
 
-#define    BLUE    GPIO_PIN_15
-#define    GREEN   GPIO_PIN_12
-#define    RED     GPIO_PIN_14
+#define    BLUE    GPIO_PIN_12
+#define    GREEN   GPIO_PIN_10
+#define    RED     GPIO_PIN_11
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -104,40 +105,38 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-	  HAL_ADC_Start(&hadc1);
-	           if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK)
-	           {
-	               ADCValue=HAL_ADC_GetValue(&hadc1);
-	           }
-	           HAL_ADC_Stop(&hadc1);
-
-
-
-	           VP= (ADCValue*100)/4095;
-	           //VP= 56;
-
-
-
-	           if(VP>0 && VP<SP-Offset)
-	           {
-	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
-	               HAL_GPIO_WritePin(GPIOA, BLUE, GPIO_PIN_SET);
-
-	           }else if(VP>SP-Offset && VP<SP+Offset)
-	           {
-	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
-	               HAL_GPIO_WritePin(GPIOA, GREEN, GPIO_PIN_SET);
-
-	           }else if(VP>SP+Offset && VP<100)
-	           {
-	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
-	               HAL_GPIO_WritePin(GPIOA, RED, GPIO_PIN_SET);
-	           }else{
-
-	           }
     /* USER CODE END WHILE */
+	  HAL_ADC_Start(&hadc1);
+	  	           if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK)
+	  	           {
+	  	               ADCValue=HAL_ADC_GetValue(&hadc1);
+	  	           }
+	  	           HAL_ADC_Stop(&hadc1);
 
+
+
+	  	           VP= (ADCValue*100)/4095;
+	  	           //VP= 56;
+
+
+
+	  	           if(VP>0 && VP<SP-Offset)
+	  	           {
+	  	               HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	  	               HAL_GPIO_WritePin(GPIOC, BLUE, GPIO_PIN_SET);
+
+	  	           }else if(VP>SP-Offset && VP<SP+Offset)
+	  	           {
+	  	               HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	  	               HAL_GPIO_WritePin(GPIOC, GREEN, GPIO_PIN_SET);
+
+	  	           }else if(VP>SP+Offset && VP<100)
+	  	           {
+	  	               HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	  	               HAL_GPIO_WritePin(GPIOC, RED, GPIO_PIN_SET);
+	  	           }else{
+
+	  	           }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -247,16 +246,17 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PA12 PA14 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_14|GPIO_PIN_15;
+  /*Configure GPIO pins : PC10 PC11 PC12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
 
