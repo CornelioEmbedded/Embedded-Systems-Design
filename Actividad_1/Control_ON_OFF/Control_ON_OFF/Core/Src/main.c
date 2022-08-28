@@ -42,7 +42,7 @@
 ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
-
+ADC_HandleTypeDef hadc1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -51,6 +51,16 @@ static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
+uint32_t ADCValue=0;
+uint32_t VP=0;
+uint32_t SP=50;
+uint32_t Offset=5;
+
+
+
+#define    BLUE    GPIO_PIN_15
+#define    GREEN   GPIO_PIN_12
+#define    RED     GPIO_PIN_14
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -95,6 +105,39 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+	  HAL_ADC_Start(&hadc1);
+	           if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK)
+	           {
+	               ADCValue=HAL_ADC_GetValue(&hadc1);
+	           }
+	           HAL_ADC_Stop(&hadc1);
+
+
+
+	           VP= (ADCValue*100)/4095;
+	           //VP= 56;
+
+
+
+	           if(VP>0 && VP<SP-Offset)
+	           {
+	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	               HAL_GPIO_WritePin(GPIOA, BLUE, GPIO_PIN_SET);
+
+
+
+	           }else if(VP>SP-Offset && VP<SP+Offset)
+	           {
+	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	               HAL_GPIO_WritePin(GPIOA, GREEN, GPIO_PIN_SET);
+	           }else if(VP>SP+Offset && VP<100)
+	           {
+	               HAL_GPIO_WritePin(GPIOA, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	               HAL_GPIO_WritePin(GPIOA, RED, GPIO_PIN_SET);
+	           }else{
+
+	           }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
