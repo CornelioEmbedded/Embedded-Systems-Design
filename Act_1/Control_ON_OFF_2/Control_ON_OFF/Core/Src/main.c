@@ -19,33 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-ADC_HandleTypeDef hadc1;
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
@@ -105,47 +78,36 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-	  HAL_ADC_Start(&hadc1);
-	  	           if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK)
-	  	           {
-	  	               ADCValue=HAL_ADC_GetValue(&hadc1);
-	  	           }
-	  	           HAL_ADC_Stop(&hadc1);
+   HAL_ADC_Start(&hadc1);
+   if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK)
+   {
+	   ADCValue=HAL_ADC_GetValue(&hadc1);
+   }
+   HAL_ADC_Stop(&hadc1);
 
+   VP= (ADCValue*100)/4095;
 
+   if(VP>0 && VP<SP-Offset)
+   {
+	   HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, BLUE, GPIO_PIN_SET);
 
-	  	           VP= (ADCValue*100)/4095;
-	  	           //VP= 56;
+   }else if(VP>SP-Offset && VP<SP+Offset)
+   {
+	   HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, GREEN, GPIO_PIN_SET);
 
+   }else if(VP>SP+Offset && VP<100)
+   {
+	   HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
+	   HAL_GPIO_WritePin(GPIOC, RED, GPIO_PIN_SET);
+   }else{
 
-
-	  	           if(VP>0 && VP<SP-Offset)
-	  	           {
-	  	               HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
-	  	               HAL_GPIO_WritePin(GPIOC, BLUE, GPIO_PIN_SET);
-
-	  	           }else if(VP>SP-Offset && VP<SP+Offset)
-	  	           {
-	  	               HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
-	  	               HAL_GPIO_WritePin(GPIOC, GREEN, GPIO_PIN_SET);
-
-	  	           }else if(VP>SP+Offset && VP<100)
-	  	           {
-	  	               HAL_GPIO_WritePin(GPIOC, RED+GREEN+BLUE , GPIO_PIN_RESET);
-	  	               HAL_GPIO_WritePin(GPIOC, RED, GPIO_PIN_SET);
-	  	           }else{
-
-	  	           }
-    /* USER CODE BEGIN 3 */
   }
-  /* USER CODE END 3 */
+
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};

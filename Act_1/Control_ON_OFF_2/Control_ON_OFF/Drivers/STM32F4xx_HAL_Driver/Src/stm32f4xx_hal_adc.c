@@ -1565,7 +1565,7 @@ HAL_StatusTypeDef HAL_ADC_Stop_DMA(ADC_HandleTypeDef* hadc)
   *         the configuration information for the specified ADC.
   * @retval Converted value
   */
-uint32_t HAL_ADC_GetValue(ADC_HandleTypeDef* hadc)
+
 {       
   /* Return the selected ADC converted value */ 
   return hadc->Instance->DR;
