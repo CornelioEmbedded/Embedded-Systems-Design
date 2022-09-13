@@ -38,7 +38,7 @@ int main(void)
 
 
 void displayNumber(int valor)
-{
+  {
     int dig1,dig2,dig3,dig4,dig5,dig6,dig7,dig8;
 
     dig8=valor%10; //Unidades (8)
@@ -51,7 +51,7 @@ void displayNumber(int valor)
     dig1=(valor%100000000)/10000000;//Decenas de millones (1)
 
     setDisplay(dig1, dig2, dig3, dig4, dig5, dig6, dig7, dig8);
-}
+  }
 
 void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5,int dig6,int dig7,int dig8)
 {
@@ -74,6 +74,7 @@ void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5,int dig6,int di
     HAL_Delay(1);
 
 }
+
 
 void SystemClock_Config(void)
 {
@@ -143,6 +144,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
