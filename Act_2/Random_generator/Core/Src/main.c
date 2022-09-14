@@ -62,9 +62,9 @@ void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5,int dig6,int di
     HAL_Delay(1);
     GPIOC->ODR=D6+numeros[dig6];
     HAL_Delay(1);
-    GPIOC->ODR=D5+numeros[dig4];
+    GPIOC->ODR=D5+numeros[dig5];
     HAL_Delay(1);
-    GPIOC->ODR=D4+numeros[dig5];
+    GPIOC->ODR=D4+numeros[dig4];
     HAL_Delay(1);
     GPIOC->ODR=D3+numeros[dig3];
     HAL_Delay(1);
@@ -124,6 +124,7 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -145,11 +146,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  /*Configure GPIO pin : PB1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
