@@ -11,7 +11,8 @@ int D6 = 0x20;
 int D7 = 0x10;
 int D8 = 0x00;
 
-int NumRan;
+int NumRan = 0;
+
 uint8_t mode = 0;
 
 void SystemClock_Config(void);
@@ -24,18 +25,6 @@ void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int 
 
 int numeros[10] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09};
 
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	NumRan = (rand() % (99999999 - 10000000 + 1)) + 1000000;
-
-	mode = mode + 1;
-
-	if(mode == 2)
-	{
-		mode = 0;
-	}
-}
 
 
 int main(void)
@@ -51,13 +40,7 @@ int main(void)
   while (1)
   {
 
-	  if(mode == 0)
-	  {
-		  displayNumber(NumRan);
-	  }else
-	  {
-		  displayNumber(NumRan);
-	  }
+	  displayNumber(NumRan);
 
   }
 

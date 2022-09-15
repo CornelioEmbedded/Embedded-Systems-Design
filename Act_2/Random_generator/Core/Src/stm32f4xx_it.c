@@ -19,6 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <stdlib.h>
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -214,9 +215,15 @@ void RCC_IRQHandler(void)
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
+extern int NumRan;
 void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+	if (HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13))
+	{
+		NumRan = (rand() % (99999999 - 10000000 + 1)) + 1000000;
+	}
 
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
