@@ -220,26 +220,17 @@ void ADC_IRQHandler(void)
 extern int contador;
 void EXTI15_10_IRQHandler(void)
 {
-	contador = 0;
+
 	if (HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13))
 		{
 			contador++;
 
-			switch(contador)
+			if(contador == 5)
 			{
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
 				contador = 0;
-				break;
 			}
-
-
 		}
+
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
 
 }

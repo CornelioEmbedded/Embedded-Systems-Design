@@ -17,12 +17,22 @@ static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 void displayNumber(int valor);
 void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8);
+void setDisplay_reloj(int dig1, int dig2, int dig4, int dig5, int dig7, int dig8);
+void displayReloj(int segundos, int minutos, int horas);
 
 uint32_t ADCValue = 0;
 uint32_t VP_segundos = 0;
 uint32_t VP_minutos = 0;
 uint32_t VP_horas = 0;
+
+uint32_t segundos_antes = 0;
+
+uint32_t segundos = 1;
+uint32_t minutos = 1;
+uint32_t horas = 1;
+
 int contador = 0;
+int numero = 0;
 
 int numeros[10] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09};
 
@@ -50,9 +60,74 @@ int main(void)
 	    VP_minutos = (ADCValue*60)/4095;
 	    VP_horas = (ADCValue*24)/4095;
 
+	    if(contador == 0)
+	    {
+	    	displayNumber(0);
+	    }
 
+	    else if(contador == 1)
+		{
+			segundos = VP_segundos;
+			displayNumber(segundos);
+		}else if(contador == 2)
+		{
+			minutos = VP_minutos;
+			displayNumber(minutos);
+		}else if(contador == 3)
+		{
+			horas = VP_horas;
+			displayNumber(horas);
+		}else if(contador == 4)
+		{
+			displayReloj(segundos, minutos, horas);
+
+			if(segundos_antes <= 59)
+			{
+				segundos_antes++;
+			}
+
+			else if(segundos < 59)
+			{
+				segundos_antes=0;
+				segundos++;
+
+			}else if (minutos < 59)
+			{
+				segundos = 0;
+				minutos++;
+
+
+			}else if(horas < 23)
+			{
+				minutos = 0;
+				horas++;
+
+			}else
+			{
+				segundos = 0;
+				minutos = 0;
+				horas = 0;
+			}
+		}
 
   }
+
+}
+
+
+
+void displayReloj(int segundos, int minutos, int horas)
+{
+	int dig1,dig2,dig4,dig5,dig7,dig8;
+
+	    dig8=segundos%10;
+	    dig7=(segundos%100)/10;
+	    dig5=(minutos%10);
+	    dig4=(minutos%100)/10;
+	    dig2=(horas%10);
+	    dig1=(horas%100)/10;
+
+	    setDisplay_reloj(dig1, dig2, dig4, dig5, dig7, dig8);
 
 }
 
@@ -86,6 +161,24 @@ void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5,int dig6,int di
     GPIOC->ODR=D4+numeros[dig4];
     HAL_Delay(1);
     GPIOC->ODR=D3+numeros[dig3];
+    HAL_Delay(1);
+    GPIOC->ODR=D2+numeros[dig2];
+    HAL_Delay(1);
+    GPIOC->ODR=D1+numeros[dig1];
+    HAL_Delay(1);
+
+}
+
+void setDisplay_reloj(int dig1, int dig2, int dig4, int dig5,int dig7,int dig8)
+  {
+
+    GPIOC->ODR=D8+numeros[dig8];// Unidades
+    HAL_Delay(1);
+    GPIOC->ODR=D7+numeros[dig7];// Decenas
+    HAL_Delay(1);
+    GPIOC->ODR=D5+numeros[dig5];
+    HAL_Delay(1);
+    GPIOC->ODR=D4+numeros[dig4];
     HAL_Delay(1);
     GPIOC->ODR=D2+numeros[dig2];
     HAL_Delay(1);
