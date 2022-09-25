@@ -27,9 +27,9 @@ uint32_t VP_horas = 0;
 
 uint32_t segundos_antes = 0;
 
-uint32_t segundos = 1;
-uint32_t minutos = 1;
-uint32_t horas = 1;
+uint32_t segundos = 0;
+uint32_t minutos = 0;
+uint32_t horas = 0;
 
 int contador = 0;
 int numero = 0;
@@ -56,9 +56,9 @@ int main(void)
 	    }
 	    HAL_ADC_Stop(&hadc1);
 
-	    VP_segundos = (ADCValue*60)/4095;
-	    VP_minutos = (ADCValue*60)/4095;
-	    VP_horas = (ADCValue*24)/4095;
+	    VP_segundos = (ADCValue*59)/4095;
+	    VP_minutos = (ADCValue*59)/4095;
+	    VP_horas = (ADCValue*23)/4095;
 
 	    if(contador == 0)
 	    {
@@ -85,7 +85,6 @@ int main(void)
 			{
 				segundos_antes++;
 			}
-
 			else if(segundos < 59)
 			{
 				segundos_antes=0;
