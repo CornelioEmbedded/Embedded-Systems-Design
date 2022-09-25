@@ -84,28 +84,32 @@ int main(void)
 			if(segundos_antes <= 59)
 			{
 				segundos_antes++;
-			}
-			else if(segundos < 59)
-			{
-				segundos_antes=0;
-				segundos++;
-
-			}else if (minutos < 59)
-			{
-				segundos = 0;
-				minutos++;
-
-
-			}else if(horas < 23)
-			{
-				minutos = 0;
-				horas++;
-
 			}else
 			{
-				segundos = 0;
-				minutos = 0;
-				horas = 0;
+				if(segundos <= 59)
+				{
+					segundos_antes = 0;
+					segundos++;
+				}else
+				{
+					if(minutos <= 59)
+					{
+						segundos = 0;
+						minutos++;
+					}else
+					{
+						if(horas <= 23)
+						{
+							minutos = 0;
+							horas++;
+						}else
+						{
+							segundos = 0;
+							minutos = 0;
+							horas = 0;
+						}
+					}
+				}
 			}
 		}
 
