@@ -19,7 +19,7 @@ int tiempo;
 int numero=0;
 
 void displayNumber(int numero);
-void leerTiempo();
+void leerTiempo(void);
 void setDisplay(int dig1, int dig2,int dig4, int dig5, int dig7, int dig8);
 int numeros[10]={0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
 
@@ -66,7 +66,6 @@ void displayNumber(int numero)
 }
 void setDisplay(int dig1, int dig2, int dig4, int dig5, int dig7, int dig8)
 {
-
 	GPIOC->ODR=numeros[dig1]+D1;
 	HAL_Delay(1);
 	GPIOC->ODR=numeros[dig2]+D2;
@@ -79,55 +78,53 @@ void setDisplay(int dig1, int dig2, int dig4, int dig5, int dig7, int dig8)
 	HAL_Delay(1);
 	GPIOC->ODR=numeros[dig8]+D8;
 	HAL_Delay(1);
-
 }
 
 void leerTiempo(void){
 
 	switch(contador) {
-		  case 0:
-			  stime_1.Seconds = 0;
-			  stime_1.Hours= 0;
-			  stime_1.Minutes = 0;
-			  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
-			  break;
-	  	  case 1:
-			  stime_1.Seconds = (ADC_Value*60/4096);
-			  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
-			  break;
-	  	  case 2:
-	  		  stime_1.Minutes = (ADC_Value*60/4096);
-			  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
-			  break;
-	 	  case 3:
-			  stime_1.Hours = (ADC_Value*24/4096);
-			  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
-			  break;
-	 	  default:
-	  		  break;
-			}
-
-			{
-
-	  		HAL_RTC_GetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
-			HAL_RTC_GetDate(&hrtc, &sdate_1, RTC_FORMAT_BIN);
-
-			tiempos = stime_1.Hours;
-			minutos = stime_1.Minutes;
-			segundos = stime_1.Seconds;
-
-			tiempos = tiempos * 1000000; minutos = minutos * 1000;
-			tiempo = tiempos+minutos+segundos;
-	        }
-
-
-		    {
-			HAL_ADC_Start(&hadc1);
-			if(HAL_ADC_PollForConversion(&hadc1,5) == HAL_OK)
-			  {
-				  ADC_Value = HAL_ADC_GetValue(&hadc1);
-			  } HAL_ADC_Stop (&hadc1);
+	  case 0:
+		  stime_1.Seconds = 0;
+		  stime_1.Hours= 0;
+		  stime_1.Minutes = 0;
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  case 1:
+		  stime_1.Seconds = (ADC_Value*60/4096);
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  case 2:
+		  stime_1.Minutes = (ADC_Value*60/4096);
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  case 3:
+		  stime_1.Hours = (ADC_Value*24/4096);
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  default:
+		  break;
 		}
+
+		{
+
+		HAL_RTC_GetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		HAL_RTC_GetDate(&hrtc, &sdate_1, RTC_FORMAT_BIN);
+
+		tiempos = stime_1.Hours;
+		minutos = stime_1.Minutes;
+		segundos = stime_1.Seconds;
+
+		tiempos = tiempos * 1000000;
+		minutos = minutos * 1000;
+		tiempo = tiempos+minutos+segundos;
+		}{
+		HAL_ADC_Start(&hadc1);
+		if(HAL_ADC_PollForConversion(&hadc1,5) == HAL_OK)
+		  {
+			  ADC_Value = HAL_ADC_GetValue(&hadc1);
+		  }
+		HAL_ADC_Stop (&hadc1);
+	}
 
 }
 
