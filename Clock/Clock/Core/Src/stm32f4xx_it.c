@@ -215,8 +215,6 @@ void ADC_IRQHandler(void)
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
-
-
 extern int contador;
 void EXTI15_10_IRQHandler(void)
 {
