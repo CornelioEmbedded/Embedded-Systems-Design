@@ -1,192 +1,132 @@
-
 #include "main.h"
 
-ADC_HandleTypeDef hadc1;
+int D1=0x00;
+int D2=0x10;
+int D3=0x20;
+int D4=0x30;
+int D5=0x40;
+int D6=0x50;
+int D7=0x60;
+int D8=0x70;
 
-int D1 = 0x70;
-int D2 = 0x60;
-int D3 = 0x50;
-int D4 = 0x40;
-int D5 = 0x30;
-int D6 = 0x20;
-int D7 = 0x10;
-int D8 = 0x00;
+
+int contador = 0;
+int ADC_Value;
+int tiempos;
+int minutos;
+int segundos;
+int tiempo;
+int numero=0;
+
+void displayNumber(int numero);
+void leerTiempo(void);
+void setDisplay(int dig1, int dig2,int dig4, int dig5, int dig7, int dig8);
+int numeros[10]={0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
+
+
+ADC_HandleTypeDef hadc1;
+RTC_HandleTypeDef hrtc;
+RTC_TimeTypeDef stime_1;
+RTC_DateTypeDef sdate_1;
+
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
-void displayNumber(int valor);
-void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8);
-void setDisplay_reloj(int dig1, int dig2, int dig4, int dig5, int dig7, int dig8);
-void displayReloj(int segundos, int minutos, int horas);
-
-uint32_t ADCValue = 0;
-uint32_t VP_segundos = 0;
-uint32_t VP_minutos = 0;
-uint32_t VP_horas = 0;
-
-uint32_t segundos_antes = 0;
-
-uint32_t segundos = 1;
-uint32_t minutos = 1;
-uint32_t horas = 1;
-
-int contador = 0;
-int numero = 0;
-
-int numeros[10] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09};
+static void MX_RTC_Init(void);
 
 int main(void)
 {
-
   HAL_Init();
-
   SystemClock_Config();
-
   MX_GPIO_Init();
   MX_ADC1_Init();
+  MX_RTC_Init();
 
   while (1)
   {
-
-	  HAL_ADC_Start(&hadc1);
-	    if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK)
-	    {
-	 	   ADCValue=HAL_ADC_GetValue(&hadc1);
-	    }
-	    HAL_ADC_Stop(&hadc1);
-
-	    VP_segundos = (ADCValue*60)/4095;
-	    VP_minutos = (ADCValue*60)/4095;
-	    VP_horas = (ADCValue*24)/4095;
-
-	    if(contador == 0)
-	    {
-	    	displayNumber(0);
-	    }
-
-	    else if(contador == 1)
-		{
-			segundos = VP_segundos;
-			displayNumber(segundos);
-		}else if(contador == 2)
-		{
-			minutos = VP_minutos;
-			displayNumber(minutos);
-		}else if(contador == 3)
-		{
-			horas = VP_horas;
-			displayNumber(horas);
-		}else if(contador == 4)
-		{
-			displayReloj(segundos, minutos, horas);
-
-			if(segundos_antes <= 59)
-			{
-				segundos_antes++;
-			}
-
-			else if(segundos < 59)
-			{
-				segundos_antes=0;
-				segundos++;
-
-			}else if (minutos < 59)
-			{
-				segundos = 0;
-				minutos++;
-
-
-			}else if(horas < 23)
-			{
-				minutos = 0;
-				horas++;
-
-			}else
-			{
-				segundos = 0;
-				minutos = 0;
-				horas = 0;
-			}
-		}
-
+	  leerTiempo();
+	  displayNumber(tiempo);
   }
-
 }
 
 
 
-void displayReloj(int segundos, int minutos, int horas)
+void displayNumber(int numero)
 {
 	int dig1,dig2,dig4,dig5,dig7,dig8;
-
-	    dig8=segundos%10;
-	    dig7=(segundos%100)/10;
-	    dig5=(minutos%10);
-	    dig4=(minutos%100)/10;
-	    dig2=(horas%10);
-	    dig1=(horas%100)/10;
-
-	    setDisplay_reloj(dig1, dig2, dig4, dig5, dig7, dig8);
+	dig1=numero%10;
+	dig2=(numero%100)/10;;
+	dig4=(numero%10000)/1000;
+	dig5=(numero%100000)/10000;
+	dig7=(numero%10000000)/1000000;
+	dig8=(numero%100000000)/10000000;
+	setDisplay(dig1,dig2,dig4,dig5,dig7,dig8);
 
 }
-
-void displayNumber(int valor)
-  {
-    int dig1,dig2,dig3,dig4,dig5,dig6,dig7,dig8;
-
-    dig8=valor%10; //Unidades (8)
-    dig7=(valor%100)/10; //Decenas (7)
-    dig6=(valor%1000)/100; //Centenas (6)
-    dig5=(valor%10000)/1000; //millares almacenar el (5)
-    dig4=(valor%100000)/10000;//Decenas de millares (4)
-    dig3=(valor%1000000)/100000;//Centenas de millares (3)
-    dig2=(valor%10000000)/1000000; //Millones        (2)
-    dig1=(valor%100000000)/10000000;//Decenas de millones (1)
-
-    setDisplay(dig1, dig2, dig3, dig4, dig5, dig6, dig7, dig8);
-  }
-
-void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5,int dig6,int dig7,int dig8)
-  {
-
-    GPIOC->ODR=D8+numeros[dig8];// Unidades
-    HAL_Delay(1);
-    GPIOC->ODR=D7+numeros[dig7];// Decenas
-    HAL_Delay(1);
-    GPIOC->ODR=D6+numeros[dig6];
-    HAL_Delay(1);
-    GPIOC->ODR=D5+numeros[dig5];
-    HAL_Delay(1);
-    GPIOC->ODR=D4+numeros[dig4];
-    HAL_Delay(1);
-    GPIOC->ODR=D3+numeros[dig3];
-    HAL_Delay(1);
-    GPIOC->ODR=D2+numeros[dig2];
-    HAL_Delay(1);
-    GPIOC->ODR=D1+numeros[dig1];
-    HAL_Delay(1);
-
+void setDisplay(int dig1, int dig2, int dig4, int dig5, int dig7, int dig8)
+{
+	GPIOC->ODR=numeros[dig1]+D1;
+	HAL_Delay(1);
+	GPIOC->ODR=numeros[dig2]+D2;
+	HAL_Delay(1);
+	GPIOC->ODR=numeros[dig4]+D4;
+	HAL_Delay(1);
+	GPIOC->ODR=numeros[dig5]+D5;
+	HAL_Delay(1);
+	GPIOC->ODR=numeros[dig7]+D7;
+	HAL_Delay(1);
+	GPIOC->ODR=numeros[dig8]+D8;
+	HAL_Delay(1);
 }
 
-void setDisplay_reloj(int dig1, int dig2, int dig4, int dig5,int dig7,int dig8)
-  {
+void leerTiempo(void){
 
-    GPIOC->ODR=D8+numeros[dig8];// Unidades
-    HAL_Delay(1);
-    GPIOC->ODR=D7+numeros[dig7];// Decenas
-    HAL_Delay(1);
-    GPIOC->ODR=D5+numeros[dig5];
-    HAL_Delay(1);
-    GPIOC->ODR=D4+numeros[dig4];
-    HAL_Delay(1);
-    GPIOC->ODR=D2+numeros[dig2];
-    HAL_Delay(1);
-    GPIOC->ODR=D1+numeros[dig1];
-    HAL_Delay(1);
+	switch(contador) {
+	  case 0:
+		  stime_1.Seconds = 0;
+		  stime_1.Hours= 0;
+		  stime_1.Minutes = 0;
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  case 1:
+		  stime_1.Seconds = (ADC_Value*60/4096);
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  case 2:
+		  stime_1.Minutes = (ADC_Value*60/4096);
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  case 3:
+		  stime_1.Hours = (ADC_Value*24/4096);
+		  HAL_RTC_SetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		  break;
+	  default:
+		  break;
+		}
+
+		{
+
+		HAL_RTC_GetTime(&hrtc, &stime_1, RTC_FORMAT_BIN);
+		HAL_RTC_GetDate(&hrtc, &sdate_1, RTC_FORMAT_BIN);
+
+		tiempos = stime_1.Hours;
+		minutos = stime_1.Minutes;
+		segundos = stime_1.Seconds;
+
+		tiempos = tiempos * 1000000;
+		minutos = minutos * 1000;
+		tiempo = tiempos+minutos+segundos;
+		}{
+		HAL_ADC_Start(&hadc1);
+		if(HAL_ADC_PollForConversion(&hadc1,5) == HAL_OK)
+		  {
+			  ADC_Value = HAL_ADC_GetValue(&hadc1);
+		  }
+		HAL_ADC_Stop (&hadc1);
+	}
 
 }
-
 
 void SystemClock_Config(void)
 {
@@ -201,9 +141,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -278,6 +219,69 @@ static void MX_ADC1_Init(void)
 }
 
 /**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  RTC_TimeTypeDef sTime = {0};
+  RTC_DateTypeDef sDate = {0};
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+
+  /** Initialize RTC Only
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN Check_RTC_BKUP */
+
+  /* USER CODE END Check_RTC_BKUP */
+
+  /** Initialize RTC and set the Time and Date
+  */
+  sTime.Hours = 0x8;
+  sTime.Minutes = 0x58;
+  sTime.Seconds = 0x0;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sDate.WeekDay = RTC_WEEKDAY_SUNDAY;
+  sDate.Month = RTC_MONTH_SEPTEMBER;
+  sDate.Date = 0x25;
+  sDate.Year = 0x0;
+
+  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RTC_Init 2 */
+
+  /* USER CODE END RTC_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -333,10 +337,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -352,7 +353,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
