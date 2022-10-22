@@ -1,108 +1,194 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+int D1=0x00;
+int D2=0x10;
+int D3=0x20;
+int D4=0x30;
+int D5=0x40;
+int D6=0x50;
+int D7=0x60;
+int D8=0x70;
 
-/* USER CODE END Includes */
+int decodificar, tecla, teclado;
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
+void displayNumber(int numero);
+void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5, int dig6, int dig7, int dig8);
+void decodificarTeclado(void);
+int numeros[10]={0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9};
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  /* USER CODE BEGIN 2 */
+  GPIOA->ODR=0xF0;
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+	  displayNumber(teclado);
 
-    /* USER CODE BEGIN 3 */
+
   }
-  /* USER CODE END 3 */
+
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+void displayNumber(int valor)
+  {
+    int dig1,dig2,dig3,dig4,dig5,dig6,dig7,dig8;
+
+    dig8=valor%10; //Unidades (8)
+    dig7=(valor%100)/10; //Decenas (7)
+    dig6=(valor%1000)/100; //Centenas (6)
+    dig5=(valor%10000)/1000; //millares almacenar el (5)
+    dig4=(valor%100000)/10000;//Decenas de millares (4)
+    dig3=(valor%1000000)/100000;//Centenas de millares (3)
+    dig2=(valor%10000000)/1000000; //Millones        (2)
+    dig1=(valor%100000000)/10000000;//Decenas de millones (1)
+
+    setDisplay(dig1, dig2, dig3, dig4, dig5, dig6, dig7, dig8);
+  }
+
+void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5,int dig6,int dig7,int dig8)
+  {
+
+    GPIOC->ODR=D8+numeros[dig8];// Unidades
+    HAL_Delay(1);
+    GPIOC->ODR=D7+numeros[dig7];// Decenas
+    HAL_Delay(1);
+    GPIOC->ODR=D6+numeros[dig6];
+    HAL_Delay(1);
+    GPIOC->ODR=D5+numeros[dig5];
+    HAL_Delay(1);
+    GPIOC->ODR=D4+numeros[dig4];
+    HAL_Delay(1);
+    GPIOC->ODR=D3+numeros[dig3];
+    HAL_Delay(1);
+    GPIOC->ODR=D2+numeros[dig2];
+    HAL_Delay(1);
+    GPIOC->ODR=D1+numeros[dig1];
+    HAL_Delay(1);
+
+}
+
+
+void decodificarTeclado(void)
+{
+
+	switch(decodificar)
+	{
+	case 0:
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 1)
+		{
+			tecla = 1;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 1)
+		{
+			tecla = 2;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 1)
+		{
+			tecla = 3;
+		}
+
+
+		teclado = (teclado%100000000)*10 + tecla;
+		GPIOA->ODR = 0xF0;
+		break;
+
+	case 1:
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
+		{
+			tecla = 4;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
+		{
+			tecla = 5;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
+		{
+			tecla = 6;
+		}
+
+
+		teclado = (teclado%100000000)*10 + tecla;
+		GPIOA->ODR = 0xF0;
+		break;
+
+	case 2:
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == 1)
+		{
+			tecla = 7;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == 1)
+		{
+			tecla = 8;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == 1)
+		{
+			tecla = 9;
+		}
+
+		teclado = (teclado%100000000)*10 + tecla;
+		GPIOA->ODR = 0xF0;
+		break;
+
+	case 3:
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == 1)
+		{
+			tecla = 0;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == 1)
+		{
+			tecla = 0;
+		}
+
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == 1)
+		{
+			tecla = 0;
+		}
+
+
+		teclado = (teclado%100000000)*10 + tecla;
+		GPIOA->ODR = 0xF0;
+		break;
+
+	}
+}
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -160,8 +246,7 @@ static void MX_GPIO_Init(void)
                           |GPIO_PIN_8, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
@@ -177,10 +262,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA0 PA1 PA2 PA3
-                           PA4 PA5 PA6 PA7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+  /*Configure GPIO pins : PA0 PA1 PA2 PA3 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA4 PA5 PA6 PA7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -192,6 +281,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
 
 }
 
