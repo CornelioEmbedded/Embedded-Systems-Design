@@ -198,10 +198,6 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
-/**
-  * @brief This function handles EXTI line0 interrupt.
-  */
-
 extern int decodificar;
 void EXTI0_IRQHandler(void)
 {
@@ -211,7 +207,6 @@ void EXTI0_IRQHandler(void)
 		decodificar = 0;
 		decodificarTeclado();
 	}
-
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
 
 }
@@ -225,36 +220,34 @@ void EXTI1_IRQHandler(void)
 		decodificar = 1;
 		decodificarTeclado();
 	}
-
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
 
 }
 
 
-void EXTI2_IRQHandler(void)
+void EXTI4_IRQHandler(void)
 {
 	for(int i=0; i<=30000;i++);
-	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2))
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4))
 	{
 		decodificar = 2;
 		decodificarTeclado();
 	}
 
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
 
 }
 
 
-void EXTI3_IRQHandler(void)
+void EXTI9_5_IRQHandler(void)
 {
 	for(int i=0; i<=30000;i++);
-	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3))
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5))
 	{
 		decodificar = 3;
 		decodificarTeclado();
 	}
-
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
 
 }
 

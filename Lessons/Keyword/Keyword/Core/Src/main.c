@@ -56,7 +56,7 @@ void displayNumber(int valor)
   }
 
 void setDisplay(int dig1, int dig2, int dig3, int dig4, int dig5,int dig6,int dig7,int dig8)
-  {
+{
 
     GPIOC->ODR=D8+numeros[dig8];// Unidades
     HAL_Delay(1);
@@ -119,7 +119,7 @@ void decodificarTeclado(void)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
-		{
+  {
 			tecla = 5;
 		}
 
@@ -128,7 +128,7 @@ void decodificarTeclado(void)
 		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
 		{
 			tecla = 6;
-		}
+  }
 
 
 		teclado = (teclado%100000000)*10 + tecla;
@@ -137,21 +137,21 @@ void decodificarTeclado(void)
 
 	case 2:
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == 1)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1)
 		{
 			tecla = 7;
 		}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == 1)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1)
 		{
 			tecla = 8;
 		}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == 1)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1)
 		{
 			tecla = 9;
 		}
@@ -162,21 +162,21 @@ void decodificarTeclado(void)
 
 	case 3:
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == 1)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
 			tecla = 0;
 		}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == 1)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
 			tecla = 0;
 		}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) == 1)
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
 			tecla = 0;
 		}
@@ -262,8 +262,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA0 PA1 PA2 PA3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+  /*Configure GPIO pins : PA0 PA1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -282,6 +282,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PB4 PB5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
@@ -289,11 +295,11 @@ static void MX_GPIO_Init(void)
   HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI1_IRQn);
 
-  HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 
-  HAL_NVIC_SetPriority(EXTI3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 }
 
