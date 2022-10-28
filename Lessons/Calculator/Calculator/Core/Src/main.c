@@ -103,6 +103,15 @@ void decodificarTeclado(void)
 			tecla = 3;
 		}
 
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 1)
+		{
+			contador = 1;
+			tecla = 0;
+			acumulado = teclado;
+			teclado = 0;
+		}
 
 		teclado = (teclado%100000000)*10 + tecla;
 		GPIOA->ODR = 0xF0;
@@ -118,7 +127,7 @@ void decodificarTeclado(void)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
-  {
+		{
 			tecla = 5;
 		}
 
@@ -127,8 +136,17 @@ void decodificarTeclado(void)
 		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
 		{
 			tecla = 6;
-  }
+		}
 
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
+		{
+			contador = 2;
+			tecla = 0;
+			acumulado = teclado;
+			teclado = 0;
+		}
 
 		teclado = (teclado%100000000)*10 + tecla;
 		GPIOA->ODR = 0xF0;
@@ -155,6 +173,15 @@ void decodificarTeclado(void)
 			tecla = 9;
 		}
 
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == 1)
+		{
+			contador = 3;
+			tecla = 0;
+			acumulado = teclado;
+			teclado = 0;
+		}
 		teclado = (teclado%100000000)*10 + tecla;
 		GPIOA->ODR = 0xF0;
 		break;
@@ -164,6 +191,9 @@ void decodificarTeclado(void)
 		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
 			tecla = 0;
+			contador = 0;
+			teclado = 0;
+			acumulado = 0;
 		}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -171,15 +201,47 @@ void decodificarTeclado(void)
 		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
 			tecla = 0;
+			total = (teclado%100000000)*10 + tecla;
 		}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
-			tecla = 0;
+			switch(contador)
+			{
+			case 1:
+				total = teclado + acumulado;
+				contador = 0;
+				break;
+			case 2:
+				total = acumulado -teclado;
+				contador = 0;
+				break;
+			case 3:
+				total = acumulado * teclado;
+				contador = 0;
+				break;
+			case 4:
+				total = acumulado / teclado;
+				contador = 0;
+				break;
+			default:
+				contador = 0;
+				break;
+
+			}
 		}
 
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 1)
+		{
+			contador = 4;
+			tecla = 0;
+			acumulado = teclado;
+			teclado = 0;
+		}
 
 		teclado = (teclado%100000000)*10 + tecla;
 		GPIOA->ODR = 0xF0;
