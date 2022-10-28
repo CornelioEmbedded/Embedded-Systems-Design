@@ -102,7 +102,6 @@ void decodificarTeclado(void)
 		{
 			tecla = 3;
 		}
-
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 1)
@@ -190,7 +189,7 @@ void decodificarTeclado(void)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
-			tecla = 0;
+			tecla = 1;
 			contador = 0;
 			teclado = 0;
 			acumulado = 0;
