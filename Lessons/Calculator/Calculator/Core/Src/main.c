@@ -10,7 +10,7 @@ int D6=0x50;
 int D7=0x60;
 int D8=0x70;
 
-int decodificar, tecla, teclado;
+int decodificar, tecla, teclado, contador, acumulado, total;
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);

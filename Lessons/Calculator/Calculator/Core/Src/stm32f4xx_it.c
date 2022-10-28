@@ -201,15 +201,16 @@ void SysTick_Handler(void)
 /**
   * @brief This function handles EXTI line0 interrupt.
   */
+extern int decodificar;
 void EXTI0_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI0_IRQn 0 */
-
-  /* USER CODE END EXTI0_IRQn 0 */
+	for(int i=0; i<=30000;i++);
+	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+	{
+		decodificar = 0;
+		decodificarTeclado();
+	}
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-  /* USER CODE BEGIN EXTI0_IRQn 1 */
-
-  /* USER CODE END EXTI0_IRQn 1 */
 }
 
 /**
@@ -217,13 +218,13 @@ void EXTI0_IRQHandler(void)
   */
 void EXTI1_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI1_IRQn 0 */
-
-  /* USER CODE END EXTI1_IRQn 0 */
+	for(int i=0; i<=30000;i++);
+	if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1))
+	{
+		decodificar = 1;
+		decodificarTeclado();
+	}
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
-  /* USER CODE BEGIN EXTI1_IRQn 1 */
-
-  /* USER CODE END EXTI1_IRQn 1 */
 }
 
 /**
@@ -231,13 +232,14 @@ void EXTI1_IRQHandler(void)
   */
 void EXTI4_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI4_IRQn 0 */
+	for(int i=0; i<=30000;i++);
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4))
+	{
+		decodificar = 2;
+		decodificarTeclado();
+	}
 
-  /* USER CODE END EXTI4_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
-  /* USER CODE BEGIN EXTI4_IRQn 1 */
-
-  /* USER CODE END EXTI4_IRQn 1 */
 }
 
 /**
@@ -245,13 +247,13 @@ void EXTI4_IRQHandler(void)
   */
 void EXTI9_5_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-
-  /* USER CODE END EXTI9_5_IRQn 0 */
+	for(int i=0; i<=30000;i++);
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5))
+	{
+		decodificar = 3;
+		decodificarTeclado();
+	}
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
-  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-
-  /* USER CODE END EXTI9_5_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
