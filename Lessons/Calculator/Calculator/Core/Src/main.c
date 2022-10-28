@@ -1,16 +1,17 @@
 
 #include "main.h"
 
-int D1=0x00;
-int D2=0x10;
-int D3=0x20;
-int D4=0x30;
-int D5=0x40;
-int D6=0x50;
-int D7=0x60;
-int D8=0x70;
+int D8=0x00;
+int D7=0x10;
+int D6=0x20;
+int D5=0x30;
+int D4=0x40;
+int D3=0x50;
+int D2=0x60;
+int D1=0x70;
 
-int decodificar, tecla, teclado, contador, acumulado, total;
+int decodificar, contador, acumulado, total;
+uint32_t tecla, teclado;
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -109,7 +110,7 @@ void decodificarTeclado(void)
 			contador = 1;
 			tecla = 0;
 			acumulado = teclado;
-			teclado = 0;
+			teclado = 0;;
 		}
 
 		teclado = (teclado%100000000)*10 + tecla;
@@ -133,7 +134,7 @@ void decodificarTeclado(void)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == 1)
-		{
+  {
 			tecla = 6;
 		}
 
@@ -144,8 +145,8 @@ void decodificarTeclado(void)
 			contador = 2;
 			tecla = 0;
 			acumulado = teclado;
-			teclado = 0;
-		}
+			teclado = 0;;
+  }
 
 		teclado = (teclado%100000000)*10 + tecla;
 		GPIOA->ODR = 0xF0;
@@ -156,7 +157,7 @@ void decodificarTeclado(void)
 		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1)
 		{
 			tecla = 7;
-		}
+}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
@@ -179,7 +180,7 @@ void decodificarTeclado(void)
 			contador = 3;
 			tecla = 0;
 			acumulado = teclado;
-			teclado = 0;
+			teclado = 0;;
 		}
 		teclado = (teclado%100000000)*10 + tecla;
 		GPIOA->ODR = 0xF0;
@@ -189,7 +190,7 @@ void decodificarTeclado(void)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
-			tecla = 1;
+			total= 0;
 			contador = 0;
 			teclado = 0;
 			acumulado = 0;
@@ -207,29 +208,27 @@ void decodificarTeclado(void)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
 		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1)
 		{
-			switch(contador)
+			if(contador == 1)
 			{
-			case 1:
 				total = teclado + acumulado;
 				contador = 0;
-				break;
-			case 2:
-				total = acumulado -teclado;
+			}
+			if(contador == 2)
+			{
+				total = acumulado - teclado;
 				contador = 0;
-				break;
-			case 3:
+			}
+			if(contador == 3)
+			{
 				total = acumulado * teclado;
 				contador = 0;
-				break;
-			case 4:
+			}
+			if(contador == 4)
+			{
 				total = acumulado / teclado;
 				contador = 0;
-				break;
-			default:
-				contador = 0;
-				break;
-
 			}
+
 		}
 
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
@@ -240,9 +239,10 @@ void decodificarTeclado(void)
 			tecla = 0;
 			acumulado = teclado;
 			teclado = 0;
+			total = 0;
 		}
 
-		teclado = (teclado%100000000)*10 + tecla;
+		teclado = total;
 		GPIOA->ODR = 0xF0;
 		break;
 
@@ -305,6 +305,9 @@ static void MX_GPIO_Init(void)
                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
                           |GPIO_PIN_8, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
+
   /*Configure GPIO pins : PC0 PC1 PC2 PC3
                            PC4 PC5 PC6 PC7
                            PC8 */
@@ -324,8 +327,9 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PA4 PA5 PA6 PA7 */
   GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB4 PB5 */
